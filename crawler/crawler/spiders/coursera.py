@@ -19,11 +19,13 @@ class CourseraSpider(scrapy.Spider):
 
         courses = response.xpath("//div[contains(@class,main_container)]/a[@name='offering_card']")
 
-        for course in courses:
+        links = courses.xpath("./@href").extract()
+        names = courses.xpath("./div[@class='offering-content']//h2/text()").extract()
+
+        for idx, link in enumerate(links):
             yield {
-                'link' : course.xpath("./@href").extract_first(),
-                'name' :
-                course.xpath("./div[@class='offering-content']//h2/text()").extract_first(),
+                "link":link,
+                "name":names[idx]
             }
 
         next_page = response.css("a[data='right-arrow']::attr('href')").extract_first()
