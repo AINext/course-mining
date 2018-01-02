@@ -10,15 +10,20 @@ class CourseraSpider(scrapy.Spider):
                  ]
 
     def parse(self, response):
-        element = response.css(".rc-BrowseSummary")
-        yield {
-            'title' :  element.xpath("//h1/text()").extract_first(),
-        }
 
-        courses = response.xpath("//div[@class='offering-content']//h2/text()")
+        # title
+        #element = response.css(".rc-BrowseSummary")
+        #yield {
+        #    'title' :  element.xpath("//h1/text()").extract_first(),
+        #}
+
+        courses = response.xpath("//div[contains(@class,main_container)]/a[@name='offering_card']")
+
         for course in courses:
             yield {
-                'course' : course.extract(),
+                'link' : course.xpath("./@href").extract_first(),
+                'name' :
+                course.xpath("./div[@class='offering-content']//h2/text()").extract_first(),
             }
 
         next_page = response.css("a[data='right-arrow']::attr('href')").extract_first()
